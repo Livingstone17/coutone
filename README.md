@@ -1,7 +1,7 @@
 
-  # OutfitMatch PWA UI Design
+  # Coutone (Couture+tone)
 
-  This is a code bundle for OutfitMatch PWA UI Design. The original project is available at https://www.figma.com/design/59r2UsQbR1d1s3kPzrKsVN/OutfitMatch-PWA-UI-Design.
+  This is a code bundle for Coutone PWA add. The original project is available at https://www.figma.com/design/59r2UsQbR1d1s3kPzrKsVN/OutfitMatch-PWA-UI-Design.
 
   ## Running the code
 
