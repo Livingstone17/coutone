@@ -254,6 +254,7 @@ type Screen = 'welcome' | 'startingPoint' | 'colorInput' | 'matchingResults' | '
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [selectedGender, setSelectedGender] = useState<'male' | 'female'>('male');
+  const [selectedSkinTone, setSelectedSkinTone] = useState('#D2B48C');
   const [startingPoint, setStartingPoint] = useState<'top' | 'bottom' | 'shoes' | 'accessory' | null>(null);
   const [baseItem, setBaseItem] = useState<BaseItem | null>(null);
   const [currentOutfit, setCurrentOutfit] = useState<Outfit | null>(null);

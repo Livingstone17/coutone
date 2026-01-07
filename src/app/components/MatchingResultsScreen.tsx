@@ -238,13 +238,15 @@
 //   );
 // }
 
+
 // src/components/MatchingResultsScreen.tsx
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import { calculateCompatibility, getCompatibilityLevel } from '../utils/colorCompatibility';
 import { Info } from 'lucide-react';
-import { BaseItem } from '../App'; // or from '../types'
+import { BaseItem } from '../App';
+import { hexToHsl, hslToHex, normalizeHue, classifyColor } from '../utils/colorUtils';
 
 interface ColorMatch {
   color: string;
@@ -264,10 +266,8 @@ interface MatchingResultsScreenProps {
   }) => void;
 }
 
-// Smart matching logic based on which item is fixed
 const getMatchingColors = (
   baseColor: string,
-  gender: string,
   fixedCategory: 'top' | 'bottom' | 'shoes' | 'accessory'
 ): {
   tops: ColorMatch[];
@@ -275,43 +275,129 @@ const getMatchingColors = (
   shoes: ColorMatch[];
   accessories: ColorMatch[];
 } => {
-  // All possible options (you can enhance these later)
-  const tops: ColorMatch[] = [
-    { color: '#2563EB', name: 'Royal Blue', description: 'Crisp and professional' },
-    { color: '#000000', name: 'Black', description: 'Timeless and versatile' },
-    { color: '#FFFFFF', name: 'White', description: 'Clean and fresh' },
-    { color: '#8B4513', name: 'Brown', description: 'Warm and earthy' },
-    { color: '#DC2626', name: 'Crimson', description: 'Bold and confident' },
-  ];
+  const baseHsl = hexToHsl(baseColor);
+  const { isNeutral, isVibrant, isPastel } = classifyColor(baseHsl);
+  const { h, s, l } = baseHsl;
 
-  const bottoms: ColorMatch[] = [
-    { color: '#1A1A1A', name: 'Black', description: 'Balances bold colors' },
-    { color: '#4A4A4A', name: 'Charcoal', description: 'Professional choice' },
-    { color: '#2C3E50', name: 'Navy', description: 'Classic pairing' },
-    { color: '#8B7355', name: 'Khaki', description: 'Casual and comfortable' },
-    { color: '#6B5B4F', name: 'Brown', description: 'Earthy and sophisticated' },
-  ];
+  // Helper: create ColorMatch from HSL
+  const makeColor = (hsl: { h: number; s: number; l: number }, name: string, desc: string): ColorMatch => ({
+    color: hslToHex(hsl.h, hsl.s, hsl.l),
+    name,
+    description: desc,
+  });
 
-  const shoes: ColorMatch[] = [
-    { color: '#1A1A1A', name: 'Black Shoes', description: 'Goes with everything' },
-    { color: '#FFFFFF', name: 'White Sneakers', description: 'Modern and fresh' },
-    { color: '#8B4513', name: 'Brown Leather', description: 'Classic and refined' },
-    { color: '#2C3E50', name: 'Navy Loafers', description: 'Polished appearance' },
-  ];
+  // Deduplicate helper
+  const uniqueByColor = (arr: ColorMatch[]) => {
+    const seen = new Set<string>();
+    return arr.filter(item => {
+      if (seen.has(item.color)) return false;
+      seen.add(item.color);
+      return true;
+    });
+  };
 
-  const accessories: ColorMatch[] = [
-    { color: '#C0C0C0', name: 'Silver', description: 'Sleek and contemporary' },
-    { color: '#FFD700', name: 'Gold', description: 'Elegant and warm' },
-    { color: '#8B7355', name: 'Tan Leather', description: 'Natural and versatile' },
-    { color: '#FFFFFF', name: 'White', description: 'Clean and minimal' },
-  ];
+  // Fallback neutral options
+  const fallbacks = {
+    top: makeColor({ h: 0, s: 0, l: 95 }, 'White', 'Clean and versatile'),
+    bottom: makeColor({ h: 0, s: 0, l: 30 }, 'Charcoal', 'Professional and timeless'),
+    shoes: makeColor({ h: 0, s: 0, l: 15 }, 'Black Shoes', 'Goes with everything'),
+    accessory: makeColor({ h: 0, s: 0, l: 75 }, 'Silver', 'Sleek and modern'),
+  };
 
-  // Depending on what's fixed, return suggestions for the other items
+  // Generate palette options
+  const palettes = {
+    complementary: normalizeHue(h + 180),
+    analogous1: normalizeHue(h - 30),
+    analogous2: normalizeHue(h + 30),
+    triadic1: normalizeHue(h + 120),
+    triadic2: normalizeHue(h + 240),
+    monoDark: { h, s, l: Math.max(20, l - 20) },
+    monoLight: { h, s, l: Math.min(80, l + 20) },
+  };
+
+  // Build suggestions
+  let tops: ColorMatch[] = [];
+  let bottoms: ColorMatch[] = [];
+  let shoes: ColorMatch[] = [];
+  let accessories: ColorMatch[] = [];
+
+  // Shoes: practical neutrals
+  shoes.push(
+    makeColor({ h: 0, s: 0, l: 15 }, 'Black Shoes', 'Goes with everything'),
+    makeColor({ h: 0, s: 0, l: 95 }, 'White Sneakers', 'Fresh and modern'),
+    makeColor({ h: 30, s: 40, l: 30 }, 'Brown Leather', 'Classic and refined'),
+    makeColor({ h: 220, s: 30, l: 35 }, 'Navy Loafers', 'Polished appearance')
+  );
+
+  // Accessories: metallics + neutrals
+  accessories.push(
+    makeColor({ h: 0, s: 0, l: 75 }, 'Silver', 'Sleek and contemporary'),
+    makeColor({ h: 60, s: 100, l: 50 }, 'Gold', 'Elegant and warm'),
+    makeColor({ h: 40, s: 25, l: 60 }, 'Tan Leather', 'Natural and versatile')
+  );
+
+  // Tops & Bottoms: dynamic logic
+  if (isVibrant) {
+    bottoms.push(
+      makeColor({ h: palettes.complementary, s: Math.min(40, s * 0.7), l: 40 }, 'Complementary', 'Bold contrast'),
+      makeColor({ h: palettes.analogous1, s: s * 0.6, l: 50 }, 'Analogous 1', 'Harmonious pairing'),
+      makeColor({ h: 0, s: 0, l: 15 }, 'Black', 'Classic neutral'),
+      makeColor({ h: 220, s: 30, l: 35 }, 'Navy', 'Timeless choice')
+    );
+
+    tops.push(
+      makeColor({ h: palettes.complementary, s: Math.min(40, s * 0.7), l: 40 }, 'Complementary', 'Bold contrast'),
+      makeColor({ h: palettes.analogous2, s: s * 0.6, l: 50 }, 'Analogous 2', 'Harmonious pairing'),
+      makeColor({ h: 0, s: 0, l: 95 }, 'White', 'Crisp and clean'),
+      makeColor({ h: 40, s: 25, l: 60 }, 'Beige', 'Soft neutral')
+    );
+
+  } else if (isPastel) {
+    bottoms.push(
+      makeColor({ h: palettes.analogous1, s: s, l: Math.min(70, l + 10) }, 'Soft Analog', 'Gentle harmony'),
+      makeColor({ h: palettes.analogous2, s: s, l: Math.min(70, l + 10) }, 'Warm Analog', 'Natural flow'),
+      makeColor({ h: 40, s: 25, l: 60 }, 'Khaki', 'Casual and light'),
+      makeColor({ h: 0, s: 0, l: 90 }, 'Light Gray', 'Subtle backdrop')
+    );
+
+    tops.push(
+      makeColor({ h: palettes.analogous1, s: s, l: Math.min(70, l + 10) }, 'Soft Analog', 'Gentle harmony'),
+      makeColor({ h: palettes.monoLight.h, s: palettes.monoLight.s, l: palettes.monoLight.l }, 'Lighter Tone', 'Tonal elegance'),
+      makeColor({ h: 0, s: 0, l: 100 }, 'White', 'Fresh and airy'),
+      makeColor({ h: 220, s: 20, l: 70 }, 'Light Blue', 'Calm and cool')
+    );
+
+  } else {
+    bottoms.push(
+      makeColor({ h: palettes.monoDark.h, s: palettes.monoDark.s, l: palettes.monoDark.l }, 'Darker Tone', 'Sophisticated depth'),
+      makeColor({ h: palettes.monoLight.h, s: palettes.monoLight.s, l: palettes.monoLight.l }, 'Lighter Tone', 'Soft contrast'),
+      makeColor({ h: 30, s: 40, l: 30 }, 'Brown', 'Earthy warmth'),
+      makeColor({ h: 0, s: 0, l: 15 }, 'Black', 'Timeless staple')
+    );
+
+    tops.push(
+      makeColor({ h: palettes.monoDark.h, s: palettes.monoDark.s, l: palettes.monoDark.l }, 'Darker Tone', 'Sophisticated depth'),
+      makeColor({ h: palettes.triadic1, s: 50, l: 60 }, 'Accent Color', 'Subtle pop'),
+      makeColor({ h: 0, s: 0, l: 95 }, 'Off-White', 'Clean and soft'),
+      makeColor({ h: 220, s: 30, l: 35 }, 'Navy', 'Classic pairing')
+    );
+  }
+
+  // Deduplicate and ensure non-empty
+  tops = uniqueByColor(tops).slice(0, 5);
+  bottoms = uniqueByColor(bottoms).slice(0, 5);
+  shoes = uniqueByColor(shoes).slice(0, 4);
+  accessories = uniqueByColor(accessories).slice(0, 4);
+
+  // Ensure at least one option
+  const ensureNonEmpty = (arr: ColorMatch[], fallback: ColorMatch) => 
+    arr.length > 0 ? arr : [fallback];
+
   return {
-    tops: fixedCategory === 'top' ? [] : tops,
-    bottoms: fixedCategory === 'bottom' ? [] : bottoms,
-    shoes: fixedCategory === 'shoes' ? [] : shoes,
-    accessories: fixedCategory === 'accessory' ? [] : accessories,
+    tops: fixedCategory === 'top' ? [] : ensureNonEmpty(tops, fallbacks.top),
+    bottoms: fixedCategory === 'bottom' ? [] : ensureNonEmpty(bottoms, fallbacks.bottom),
+    shoes: fixedCategory === 'shoes' ? [] : ensureNonEmpty(shoes, fallbacks.shoes),
+    accessories: fixedCategory === 'accessory' ? [] : ensureNonEmpty(accessories, fallbacks.accessory),
   };
 };
 
@@ -321,21 +407,13 @@ export function MatchingResultsScreen({
   startingPoint,
   onViewOutfit,
 }: MatchingResultsScreenProps) {
-  const matches = getMatchingColors(baseItem.color, 'unisex', startingPoint);
+  // ✅ Corrected: removed extra 'unisex' argument
+  const matches = getMatchingColors(baseItem.color, startingPoint);
 
-  // Initialize selected items (use first available or placeholder)
-  const [selectedTop, setSelectedTop] = useState<ColorMatch>(
-    matches.tops.length > 0 ? matches.tops[0] : { color: '#000000', name: 'Top', description: '' }
-  );
-  const [selectedBottom, setSelectedBottom] = useState<ColorMatch>(
-    matches.bottoms.length > 0 ? matches.bottoms[0] : { color: '#000000', name: 'Bottom', description: '' }
-  );
-  const [selectedShoes, setSelectedShoes] = useState<ColorMatch>(
-    matches.shoes.length > 0 ? matches.shoes[0] : { color: '#000000', name: 'Shoes', description: '' }
-  );
-  const [selectedAccessory, setSelectedAccessory] = useState<ColorMatch>(
-    matches.accessories.length > 0 ? matches.accessories[0] : { color: '#000000', name: 'Accessory', description: '' }
-  );
+  const [selectedTop, setSelectedTop] = useState<ColorMatch>(matches.tops[0]);
+  const [selectedBottom, setSelectedBottom] = useState<ColorMatch>(matches.bottoms[0]);
+  const [selectedShoes, setSelectedShoes] = useState<ColorMatch>(matches.shoes[0]);
+  const [selectedAccessory, setSelectedAccessory] = useState<ColorMatch>(matches.accessories[0]);
 
   const handleViewOutfit = () => {
     onViewOutfit({
@@ -346,7 +424,6 @@ export function MatchingResultsScreen({
     });
   };
 
-  // Helper to render a section
   const renderSection = (
     title: string,
     items: ColorMatch[],
@@ -354,24 +431,22 @@ export function MatchingResultsScreen({
     onSelect: (item: ColorMatch) => void,
     isFixed: boolean
   ) => {
-    if (isFixed) {
-      return null; // Don't show section for the fixed item
-    }
+    if (isFixed) return null;
 
     return (
       <div className="space-y-4">
         <h3 className="text-stone-700 pl-1">{title}</h3>
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-          {items.map((match, idx) => {
+          {items.map((match) => { // ✅ Key by color, not index
             const compatibility = calculateCompatibility(baseItem.color, match.color);
             const compatLevel = getCompatibilityLevel(compatibility);
 
             return (
               <button
-                key={idx}
+                key={match.color} // ✅ Unique key
                 onClick={() => onSelect(match)}
                 className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
-                  selectedItem.name === match.name
+                  selectedItem.color === match.color // ✅ Compare by color (more reliable)
                     ? 'ring-2 ring-stone-800 scale-105'
                     : 'hover:shadow-md'
                 }`}
