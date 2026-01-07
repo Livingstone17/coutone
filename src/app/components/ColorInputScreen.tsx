@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import {getColorNameFromHex} from '../utils/colorCodes';
 
 interface ColorInputScreenProps {
   onBack: () => void;
@@ -25,13 +26,31 @@ const clothingTypes = [
 
 export function ColorInputScreen({ onBack, onFindMatches }: ColorInputScreenProps) {
   const [selectedColor, setSelectedColor] = useState('#6B5B95');
-  const [colorName, setColorName] = useState('Purple');
+  const [colorName, setColorName] = useState('');
   const [clothingType, setClothingType] = useState('');
 
-  const handleSubmit = () => {
-    if (clothingType) {
-      onFindMatches(selectedColor, colorName, clothingType);
+  const handleColorChange = (hex: string) => {
+    setSelectedColor(hex);
+
+    if (!colorName) {
+      setColorName(getColorNameFromHex(hex));
     }
+  };
+
+  // const handleSubmit = () => {
+  //   if (clothingType) {
+  //     onFindMatches(selectedColor, colorName, clothingType);
+  //   }
+  // };
+
+  const handleSubmit = () => {
+    if (!clothingType) return;
+
+    onFindMatches(
+      selectedColor,
+      colorName || getColorNameFromHex(selectedColor),
+      clothingType
+    );
   };
 
   return (
@@ -66,7 +85,8 @@ export function ColorInputScreen({ onBack, onFindMatches }: ColorInputScreenProp
               <input
                 type="color"
                 value={selectedColor}
-                onChange={(e) => setSelectedColor(e.target.value)}
+                // onChange={(e) => setSelectedColor(e.target.value)}
+                onChange={(e) => handleColorChange(e.target.value)}
                 className="absolute inset-0 w-48 h-48 opacity-0 cursor-pointer"
               />
             </div>
@@ -78,7 +98,7 @@ export function ColorInputScreen({ onBack, onFindMatches }: ColorInputScreenProp
             <Input
               type="text"
               value={colorName}
-              onChange={(e) => setColorName(e.target.value)}
+              onChange={(e) => setColorName(e.target.value)} 
               placeholder="e.g., Navy Blue"
               className="h-14 rounded-2xl border-stone-300 bg-white"
             />

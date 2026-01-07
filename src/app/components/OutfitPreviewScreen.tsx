@@ -1,5 +1,6 @@
 import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from './ui/button';
+import { calculateOutfitCompatibility, getCompatibilityLevel } from '../utils/colorCompatibility';
 
 interface ColorMatch {
   color: string;
@@ -30,6 +31,14 @@ export function OutfitPreviewScreen({
     });
   };
 
+  // Calculate overall outfit compatibility
+  const overallCompatibility = calculateOutfitCompatibility([
+    outfit.top.color,
+    outfit.bottom.color,
+    outfit.shoes.color,
+  ]);
+  const compatibilityLevel = getCompatibilityLevel(overallCompatibility);
+
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       {/* Header */}
@@ -46,7 +55,32 @@ export function OutfitPreviewScreen({
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
-          <h2 className="text-2xl text-stone-800 text-center">Your Outfit</h2>
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl text-stone-800">Your Outfit</h2>
+            
+            {/* Overall Compatibility Score */}
+            <div className="inline-flex items-center gap-3 bg-white rounded-2xl px-6 py-3 shadow-sm">
+              <div className="text-center">
+                <div
+                  className="text-3xl mb-1"
+                  style={{ color: compatibilityLevel.color }}
+                >
+                  {overallCompatibility}%
+                </div>
+                <div className="text-xs text-stone-500">Color Match</div>
+              </div>
+              <div className="h-12 w-px bg-stone-200" />
+              <div className="text-center">
+                <div
+                  className="text-sm mb-1"
+                  style={{ color: compatibilityLevel.color }}
+                >
+                  {compatibilityLevel.label}
+                </div>
+                <div className="text-xs text-stone-500">Rating</div>
+              </div>
+            </div>
+          </div>
 
           {/* Simplified Silhouette */}
           <div className="bg-white rounded-3xl p-8 shadow-lg">

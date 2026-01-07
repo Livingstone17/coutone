@@ -1,6 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
+import { calculateCompatibility, getCompatibilityLevel } from '../utils/colorCompatibility';
+import { Info } from 'lucide-react';
 
 interface ColorMatch {
   color: string;
@@ -97,28 +99,63 @@ export function MatchingResultsScreen({
 
       {/* Results */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 pb-24">
+        {/* Info Banner */}
+        <div className="bg-gradient-to-r from-stone-100 to-stone-50 rounded-2xl p-4 flex gap-3 items-start border border-stone-200">
+          <Info className="w-5 h-5 text-stone-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm text-stone-700 mb-1">Color Compatibility Score</p>
+            <p className="text-xs text-stone-500">
+              Percentages show how well colors match based on color theory, contrast, and harmony. Higher scores mean better combinations!
+            </p>
+          </div>
+        </div>
+
         {/* Bottoms Section */}
         <div className="space-y-4">
           <h3 className="text-stone-700 pl-1">Pants / Skirt</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-            {matches.bottoms.map((match, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedBottom(match)}
-                className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
-                  selectedBottom.name === match.name
-                    ? 'ring-2 ring-stone-800 scale-105'
-                    : 'hover:shadow-md'
-                }`}
-              >
-                <div
-                  className="w-full h-20 rounded-xl mb-3"
-                  style={{ backgroundColor: match.color }}
-                />
-                <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
-                <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
-              </button>
-            ))}
+            {matches.bottoms.map((match, idx) => {
+              const compatibility = calculateCompatibility(selectedColor, match.color);
+              const compatLevel = getCompatibilityLevel(compatibility);
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedBottom(match)}
+                  className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
+                    selectedBottom.name === match.name
+                      ? 'ring-2 ring-stone-800 scale-105'
+                      : 'hover:shadow-md'
+                  }`}
+                >
+                  <div className="relative">
+                    <div
+                      className="w-full h-20 rounded-xl mb-3"
+                      style={{ backgroundColor: match.color }}
+                    />
+                    <div
+                      className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm shadow-sm"
+                      style={{ color: compatLevel.color }}
+                    >
+                      {compatibility}%
+                    </div>
+                  </div>
+                  <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
+                  <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
+                  <div className="mt-2 flex items-center gap-1">
+                    <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${compatibility}%`,
+                          backgroundColor: compatLevel.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -126,24 +163,48 @@ export function MatchingResultsScreen({
         <div className="space-y-4">
           <h3 className="text-stone-700 pl-1">Shoes</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-            {matches.shoes.map((match, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedShoes(match)}
-                className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
-                  selectedShoes.name === match.name
-                    ? 'ring-2 ring-stone-800 scale-105'
-                    : 'hover:shadow-md'
-                }`}
-              >
-                <div
-                  className="w-full h-20 rounded-xl mb-3 border border-stone-200"
-                  style={{ backgroundColor: match.color }}
-                />
-                <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
-                <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
-              </button>
-            ))}
+            {matches.shoes.map((match, idx) => {
+              const compatibility = calculateCompatibility(selectedColor, match.color);
+              const compatLevel = getCompatibilityLevel(compatibility);
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedShoes(match)}
+                  className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
+                    selectedShoes.name === match.name
+                      ? 'ring-2 ring-stone-800 scale-105'
+                      : 'hover:shadow-md'
+                  }`}
+                >
+                  <div className="relative">
+                    <div
+                      className="w-full h-20 rounded-xl mb-3 border border-stone-200"
+                      style={{ backgroundColor: match.color }}
+                    />
+                    <div
+                      className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm shadow-sm"
+                      style={{ color: compatLevel.color }}
+                    >
+                      {compatibility}%
+                    </div>
+                  </div>
+                  <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
+                  <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
+                  <div className="mt-2 flex items-center gap-1">
+                    <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${compatibility}%`,
+                          backgroundColor: compatLevel.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -151,24 +212,48 @@ export function MatchingResultsScreen({
         <div className="space-y-4">
           <h3 className="text-stone-700 pl-1">Accessories</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-            {matches.accessories.map((match, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedAccessory(match)}
-                className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
-                  selectedAccessory.name === match.name
-                    ? 'ring-2 ring-stone-800 scale-105'
-                    : 'hover:shadow-md'
-                }`}
-              >
-                <div
-                  className="w-full h-20 rounded-xl mb-3 border border-stone-200"
-                  style={{ backgroundColor: match.color }}
-                />
-                <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
-                <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
-              </button>
-            ))}
+            {matches.accessories.map((match, idx) => {
+              const compatibility = calculateCompatibility(selectedColor, match.color);
+              const compatLevel = getCompatibilityLevel(compatibility);
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedAccessory(match)}
+                  className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
+                    selectedAccessory.name === match.name
+                      ? 'ring-2 ring-stone-800 scale-105'
+                      : 'hover:shadow-md'
+                  }`}
+                >
+                  <div className="relative">
+                    <div
+                      className="w-full h-20 rounded-xl mb-3 border border-stone-200"
+                      style={{ backgroundColor: match.color }}
+                    />
+                    <div
+                      className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm shadow-sm"
+                      style={{ color: compatLevel.color }}
+                    >
+                      {compatibility}%
+                    </div>
+                  </div>
+                  <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
+                  <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
+                  <div className="mt-2 flex items-center gap-1">
+                    <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${compatibility}%`,
+                          backgroundColor: compatLevel.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
