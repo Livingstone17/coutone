@@ -1,5 +1,6 @@
 import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from './ui/button';
+import {Outfit} from '../utils/types';
 
 interface SavedOutfit {
   top: { color: string; name: string; description: string };
@@ -9,10 +10,17 @@ interface SavedOutfit {
   dateSaved: string;
 }
 
+// interface SavedOutfitsScreenProps {
+//   onBack: () => void;
+//   savedOutfits: SavedOutfit[];
+//   // onSelectOutfit: (outfit: SavedOutfit) => void;
+//   onSelectOutfit: (outfit: Outfit) => void;
+//   onCreateNew: () => void;
+// }
 interface SavedOutfitsScreenProps {
   onBack: () => void;
-  savedOutfits: SavedOutfit[];
-  onSelectOutfit: (outfit: SavedOutfit) => void;
+  savedOutfits: Outfit[];
+  onSelectOutfit: (outfit: Outfit) => void; // 👈 same type!
   onCreateNew: () => void;
 }
 

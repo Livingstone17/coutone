@@ -12,7 +12,7 @@ export function WelcomeScreen({ onSelectGender }: WelcomeScreenProps) {
         {/* Logo and Header */}
         <div className="text-center space-y-3">
           <h1 className="text-4xl tracking-tight text-stone-800">
-            Coutone(couture+tone)
+            Coutone
           </h1>
           <p className="text-stone-600">
             Match your outfit with confidence
