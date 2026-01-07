@@ -1,6 +1,10 @@
 {
-    "compilerOptions": {
-      "jsx": "react-jsx"
-    }
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "es2017",       // modern JS features like Math.cbrt
+    "lib": ["dom", "es2017"], // includes Object.entries
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "node"
   }
-  
+}
