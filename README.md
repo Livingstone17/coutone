@@ -1,7 +1,7 @@
 
   # Coutone (Couture+tone)
 
-  This is a code bundle for Coutone PWA add. The original project is available at https://www.figma.com/design/59r2UsQbR1d1s3kPzrKsVN/OutfitMatch-PWA-UI-Design.
+  This is a code bundle for Coutone PWA add. The project is deployed to vercel and available at https://coutone.vercel.app
 
   ## Running the code
 
