@@ -168,12 +168,12 @@ export function OutfitPreviewScreen({
   const compatibilityLevel = getCompatibilityLevel(overallCompatibility);
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-stone-200 px-4 py-4">
+      <div className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] px-4 py-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-stone-600 hover:text-stone-800 transition-colors"
+          className="flex items-center gap-2 text-stone-600 hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
@@ -184,10 +184,10 @@ export function OutfitPreviewScreen({
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-3">
-            <h2 className="text-2xl text-stone-800">Your Outfit</h2>
+            <h2 className="text-2xl text-[var(--text-primary)]">Your Outfit</h2>
             
             {/* Overall Compatibility Score */}
-            <div className="inline-flex items-center gap-3 bg-white rounded-2xl px-6 py-3 shadow-sm">
+            <div className="inline-flex items-center gap-3 bg-[var(--bg-secondary)] rounded-2xl px-6 py-3 shadow-sm">
               <div className="text-center">
                 <div
                   className="text-3xl mb-1"
@@ -211,7 +211,7 @@ export function OutfitPreviewScreen({
           </div>
 
           {/* Simplified Silhouette */}
-          <div className="bg-white rounded-3xl p-8 shadow-lg">
+          <div className="bg-[var(--bg-secondary)] rounded-3xl p-8 shadow-lg">
             <div className="flex flex-col items-center space-y-4">
               {/* Head */}
               <div className="w-16 h-16 rounded-full bg-stone-200" />
@@ -248,25 +248,25 @@ export function OutfitPreviewScreen({
           </div>
 
           {/* Color Details */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
+          <div className="bg-[var(--bg-secondary)] rounded-2xl p-6 shadow-sm space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: outfit.top.color }} />
               <div className="flex-1">
-                <p className="text-sm text-stone-800">{outfit.top.name}</p>
+                <p className="text-sm text-[var(--text-primary)]">{outfit.top.name}</p>
                 <p className="text-xs text-stone-500">{outfit.top.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: outfit.bottom.color }} />
               <div className="flex-1">
-                <p className="text-sm text-stone-800">{outfit.bottom.name}</p>
+                <p className="text-sm text-[var(--text-primary)]">{outfit.bottom.name}</p>
                 <p className="text-xs text-stone-500">{outfit.bottom.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg border border-stone-200" style={{ backgroundColor: outfit.shoes.color }} />
+              <div className="w-8 h-8 rounded-lg border border-[var(--border-color)]" style={{ backgroundColor: outfit.shoes.color }} />
               <div className="flex-1">
-                <p className="text-sm text-stone-800">{outfit.shoes.name}</p>
+                <p className="text-sm text-[var(--text-primary)]">{outfit.shoes.name}</p>
                 <p className="text-xs text-stone-500">{outfit.shoes.description}</p>
               </div>
             </div>

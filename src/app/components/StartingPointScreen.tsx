@@ -26,12 +26,12 @@ export function StartingPointScreen({ gender, onSelectStartingPoint, onBack }: S
       ];
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md space-y-6">
         {/* Back Button */}
         <motion.button
           onClick={onBack}
-          className="flex items-center gap-2 text-stone-600 hover:text-stone-800 mb-6"
+          className="flex items-center gap-2 text-stone-600 hover:text-[var(--text-primary)] mb-6"
           whileHover={{ x: -4 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -42,7 +42,7 @@ export function StartingPointScreen({ gender, onSelectStartingPoint, onBack }: S
         {/* Header */}
         <div className="text-center space-y-2">
           <motion.h2
-            className="text-2xl text-stone-800"
+            className="text-2xl text-[var(--text-primary)]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
@@ -77,7 +77,7 @@ export function StartingPointScreen({ gender, onSelectStartingPoint, onBack }: S
             <motion.button
               key={option.type}
               onClick={() => onSelectStartingPoint(option.type)}
-              className="w-full bg-white p-6 rounded-2xl border border-stone-200 text-stone-800 shadow-sm overflow-hidden"
+              className="w-full bg-[var(--bg-secondary)] p-6 rounded-2xl border border-[var(--border-color)] text-[var(--text-primary)] shadow-sm overflow-hidden"
               // Staggered entry
               variants={{
                 hidden: { opacity: 0, y: 20 },

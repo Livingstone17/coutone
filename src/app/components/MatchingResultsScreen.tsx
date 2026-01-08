@@ -445,25 +445,26 @@ export function MatchingResultsScreen({
               <button
                 key={match.color} // ✅ Unique key
                 onClick={() => onSelect(match)}
-                className={`flex-shrink-0 w-40 bg-white rounded-2xl p-4 shadow-sm transition-all ${
+                className={`flex-shrink-0 w-40 bg-[var(--bg-secondary)]rounded-2xl p-4 shadow-sm transition-all ${
                   selectedItem.color === match.color // ✅ Compare by color (more reliable)
                     ? 'ring-2 ring-stone-800 scale-105'
                     : 'hover:shadow-md'
                 }`}
+               
               >
                 <div className="relative">
                   <div
-                    className="w-full h-20 rounded-xl mb-3 border border-stone-200"
+                    className="w-full h-20 rounded-xl mb-3 border border-[var(--border-color)]"
                     style={{ backgroundColor: match.color }}
                   />
                   <div
-                    className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm shadow-sm"
+                    className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium bg-[var(--bg-secondary)]/90 backdrop-blur-sm shadow-sm"
                     style={{ color: compatLevel.color }}
                   >
                     {compatibility}%
                   </div>
                 </div>
-                <h4 className="text-sm text-stone-800 mb-1">{match.name}</h4>
+                <h4 className="text-sm text-[var(--text-primary)] mb-1">{match.name}</h4>
                 <p className="text-xs text-stone-500 line-clamp-2">{match.description}</p>
                 <div className="mt-2 flex items-center gap-1">
                   <div className="flex-1 h-1 bg-stone-100 rounded-full overflow-hidden">
@@ -485,23 +486,23 @@ export function MatchingResultsScreen({
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-stone-200 px-4 py-4">
+      <div className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] px-4 py-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-stone-600 hover:text-stone-800 transition-colors mb-3"
+          className="flex items-center gap-2 text-stone-600 hover:text-[var(--text-primary)] transition-colors mb-3"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </button>
         <div className="flex items-center gap-3">
           <div
-            className="w-10 h-10 rounded-full border-2 border-stone-200"
+            className="w-10 h-10 rounded-full border-2 border-[var(--border-color)]"
             style={{ backgroundColor: baseItem.color }}
           />
           <div>
-            <h2 className="text-lg text-stone-800">{baseItem.name} {baseItem.type}</h2>
+            <h2 className="text-lg text-[var(--text-primary)]">{baseItem.name} {baseItem.type}</h2>
             <p className="text-sm text-stone-500">Matching suggestions</p>
           </div>
         </div>
@@ -510,7 +511,7 @@ export function MatchingResultsScreen({
       {/* Results */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 pb-24">
         {/* Info Banner */}
-        <div className="bg-gradient-to-r from-stone-100 to-stone-50 rounded-2xl p-4 flex gap-3 items-start border border-stone-200">
+        <div className="bg-gradient-to-r from-stone-100 to-stone-50 rounded-2xl p-4 flex gap-3 items-start border border-[var(--border-color)]">
           <Info className="w-5 h-5 text-stone-600 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm text-stone-700 mb-1">Color Compatibility Score</p>
@@ -528,7 +529,7 @@ export function MatchingResultsScreen({
       </div>
 
       {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 px-4 py-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-[var(--bg-secondary)] border-t border-[var(--border-color)] px-4 py-4">
         <Button
           onClick={handleViewOutfit}
           className="w-full h-14 rounded-2xl bg-stone-800 hover:bg-stone-700 text-white"

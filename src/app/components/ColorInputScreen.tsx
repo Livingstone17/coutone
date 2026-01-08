@@ -247,11 +247,11 @@ export function ColorInputScreen({ gender, startingPoint, onBack, onFindMatches 
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
-      <div className="bg-white border-b border-stone-200 px-4 py-4">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
+      <div className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] px-4 py-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-stone-600 hover:text-stone-800 transition-colors"
+          className="flex items-center gap-2 text-stone-600 hover:text-[var(--text-primary)] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
@@ -261,7 +261,7 @@ export function ColorInputScreen({ gender, startingPoint, onBack, onFindMatches 
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="text-2xl text-stone-800 mb-2">
+            <h2 className="text-2xl text-[var(--text-primary)] mb-2">
               What color is your {startingPoint}?
             </h2>
           </div>
@@ -295,7 +295,7 @@ export function ColorInputScreen({ gender, startingPoint, onBack, onFindMatches 
               value={colorName}
               onChange={(e) => handleColorNameChange(e.target.value)}
               placeholder="e.g., Olive Green or #808000"
-              className="h-14 rounded-2xl border-stone-300 bg-white"
+              className="h-14 rounded-2xl border-stone-300 bg-[var(--bg-secondary)]"
             />
           </div>
 
@@ -303,7 +303,7 @@ export function ColorInputScreen({ gender, startingPoint, onBack, onFindMatches 
           <div className="space-y-2">
             <label className="text-sm text-stone-600 pl-1">{categoryLabels[startingPoint]}</label>
             <Select value={clothingType} onValueChange={setClothingType}>
-              <SelectTrigger className="h-14 rounded-2xl border-stone-300 bg-white">
+              <SelectTrigger className="h-14 rounded-2xl border-stone-300 bg-[var(--bg-secondary)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
