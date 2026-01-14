@@ -66,9 +66,7 @@
 //   };
     
 
-// src/utils/colorCodes.ts
 
-// Your existing color map (keep it as is)
 export const COLOR_NAME_MAP: Record<string, string> = {
     '#000000': 'Black',
     '#FFFFFF': 'White',
